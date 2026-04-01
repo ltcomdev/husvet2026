@@ -16,7 +16,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #000 url('thumb.png') center/cover no-repeat;
+            background: #000 url('HUSVET_2026_fekvo_fuves_hatter.jpg') center/cover no-repeat;
         }
 
         .video-container {
@@ -36,6 +36,21 @@
 
         .video-container iframe.ready {
             opacity: 1;
+        }
+
+        .opener {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 5;
+            transition: opacity 0.8s ease;
+        }
+
+        .opener.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .click-hint {
@@ -117,6 +132,8 @@
         ></iframe>
     </div>
 
+    <img class="opener" id="opener" src="LT_Spoti_NEXT_edm_HUSVET_2026_fekvo.jpg" alt="Boldog Húsvétot!">
+
     <div class="click-hint" id="clickHint">
         <span>Kattints a hanghoz és a teljes képernyőhöz 🔊</span>
     </div>
@@ -138,12 +155,14 @@
         let isMuted = true;
 
         const iframe = document.getElementById('vimeo-player');
+        const opener = document.getElementById('opener');
 
         player.setVolume(0);
         player.play().catch(() => {});
 
         player.on('playing', function onFirstFrame() {
             iframe.classList.add('ready');
+            opener.classList.add('hidden');
             player.off('playing', onFirstFrame);
         });
 
