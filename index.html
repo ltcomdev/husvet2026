@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Boldog Húsvétot! 🐣</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
@@ -16,12 +16,17 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #000 url('HUSVET_2026_video_video_hatter.jpg') center/cover no-repeat;
+            background-color: #000;
+            background-image: url('HUSVET_2026_video_video_hatter.jpg');
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
         }
 
         .video-container {
-            position: fixed;
-            inset: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
         }
@@ -31,6 +36,7 @@
             height: 100%;
             border: none;
             opacity: 0;
+            -webkit-transition: opacity 0.8s ease;
             transition: opacity 0.8s ease;
         }
 
@@ -39,12 +45,15 @@
         }
 
         .opener {
-            position: fixed;
-            inset: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            -o-object-fit: cover;
             object-fit: cover;
             z-index: 5;
+            -webkit-transition: opacity 0.8s ease;
             transition: opacity 0.8s ease;
         }
 
@@ -54,14 +63,24 @@
         }
 
         .click-hint {
-            position: fixed;
-            inset: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 15;
+            display: -webkit-box;
+            display: -webkit-flex;
             display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
             align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
             justify-content: center;
             cursor: pointer;
             background: rgba(0, 0, 0, 0.3);
+            -webkit-transition: opacity 0.6s ease;
             transition: opacity 0.6s ease;
         }
 
@@ -73,22 +92,26 @@
         .click-hint span {
             color: #fff;
             font-family: system-ui, -apple-system, sans-serif;
-            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            font-size: 1.2rem;
             padding: 1rem 2rem;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.6);
             border-radius: 2rem;
             letter-spacing: 0.02em;
+            -webkit-animation: pulse 2s ease-in-out infinite;
             animation: pulse 2s ease-in-out infinite;
         }
 
+        @-webkit-keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
         @keyframes pulse {
             0%, 100% { opacity: 0.8; }
             50% { opacity: 1; }
         }
 
         .sound-btn {
-            position: fixed;
+            position: absolute;
             bottom: 2rem;
             right: 2rem;
             z-index: 20;
@@ -96,18 +119,23 @@
             height: 56px;
             border-radius: 50%;
             border: 2px solid rgba(255, 255, 255, 0.6);
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.6);
             cursor: pointer;
+            display: -webkit-box;
+            display: -webkit-flex;
             display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
             align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
             justify-content: center;
+            -webkit-transition: transform 0.2s ease, background 0.2s ease;
             transition: transform 0.2s ease, background 0.2s ease;
         }
 
         .sound-btn:hover {
-            transform: scale(1.1);
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
         }
 
         .sound-btn svg {
@@ -149,16 +177,15 @@
 
     <script src="https://player.vimeo.com/api/player.js"></script>
     <script>
-        const player = new Vimeo.Player(document.getElementById('vimeo-player'));
-        const soundBtn = document.getElementById('soundBtn');
-        const clickHint = document.getElementById('clickHint');
-        let isMuted = true;
-
-        const iframe = document.getElementById('vimeo-player');
-        const opener = document.getElementById('opener');
+        var player = new Vimeo.Player(document.getElementById('vimeo-player'));
+        var soundBtn = document.getElementById('soundBtn');
+        var clickHint = document.getElementById('clickHint');
+        var iframe = document.getElementById('vimeo-player');
+        var opener = document.getElementById('opener');
+        var isMuted = true;
 
         player.setVolume(0);
-        player.play().catch(() => {});
+        player.play().catch(function() {});
 
         player.on('playing', function onFirstFrame() {
             iframe.classList.add('ready');
@@ -166,16 +193,20 @@
             player.off('playing', onFirstFrame);
         });
 
-        clickHint.addEventListener('click', () => {
+        clickHint.addEventListener('click', function() {
             clickHint.classList.add('hidden');
-            document.documentElement.requestFullscreen().catch(() => {});
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(function() {});
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen();
+            }
             isMuted = false;
             player.setVolume(1);
             player.setCurrentTime(0);
             soundBtn.classList.add('unmuted');
         });
 
-        soundBtn.addEventListener('click', (e) => {
+        soundBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             isMuted = !isMuted;
             player.setVolume(isMuted ? 0 : 1);
